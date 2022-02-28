@@ -1,0 +1,22 @@
+function betterDescriptions(v: text) :: texts:
+    set {_texts::*} to {_v} split at " "
+    set {_line} to 1
+    loop {_texts::*}:
+        if {_totalsize} > 18:
+            add 1 to {_line} 
+            delete {_totalsize}
+        add length of loop-value-1 to {_totalsize}
+        add loop-value-1 to {_return::%{_line}%::*}
+
+    loop {_line} times:
+        if loop-number is 1:
+            set {_return2::%loop-number%} to join {_return::%loop-number%::*} with delimiter " "
+        else:
+            set {_v} to join {_return::%loop-number%::*} with delimiter " "
+            set {_return2::%loop-number%} to " %{_v}%"
+
+    
+    return {_return2::*}
+
+on load:
+    broadcast betterDescriptions("Selamat datang di pumpkincraft para penjelajah baru!, tingkatkan pengetahuanmu dalam menghandle berbagai fitur disini untuk menjadi salah satu pemain elit!")
