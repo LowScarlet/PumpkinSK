@@ -1,0 +1,65 @@
+Options:
+	base.name: basic
+
+# Friend
+function friend_setFriend(p: offline player, target: offline player):
+    set {PLAYER::%{_p}%::{@base.name}::friend::list::%{_target}%} to {_target}
+    set {PLAYER::%{_target}%::{@base.name}::friend::list::%{_p}%} to {_p}
+function friend_removeFriend(p: offline player, target: offline player):
+    delete {PLAYER::%{_p}%::{@base.name}::friend::list::%{_target}%}
+    delete {PLAYER::%{_target}%::{@base.name}::friend::list::%{_p}%}
+function friend_addRequestFriend(p: offline player, target: offline player):
+    set {PLAYER::%{_target}%::{@base.name}::friend::req-list::%{_p}%} to {_p}
+    set {PLAYER::%{_target}%::{@base.name}::friend::req-list::%{_p}%::req-date} to now
+    set {PLAYER::%{_p}%::{@base.name}::friend::pending-list::%{_target}%} to {_target}
+function friend_removeRequestFriend(p: offline player, target: offline player):
+    delete {PLAYER::%{_p}%::{@base.name}::friend::req-list::%{_target}%}
+    delete {PLAYER::%{_p}%::{@base.name}::friend::req-list::%{_target}%::*}
+    delete {PLAYER::%{_target}%::{@base.name}::friend::pending-list::%{_p}%}
+# Close Friend
+function friend_setCloseFriend(p: offline player, target: offline player):
+    set {PLAYER::%{_p}%::{@base.name}::friend::list::%{_target}%::close-friend} to true
+    set {PLAYER::%{_target}%::{@base.name}::friend::list::%{_p}%::close-friend} to true
+function friend_removeCloseFriend(p: offline player, target: offline player):
+    delete {PLAYER::%{_p}%::{@base.name}::friend::list::%{_target}%::close-friend}
+    delete {PLAYER::%{_target}%::{@base.name}::friend::list::%{_p}%::close-friend}
+function friend_addRequestCloseFriend(p: offline player, target: offline player):
+    set {PLAYER::%{_target}%::{@base.name}::friend::req-closefriend-list::%{_p}%} to {_p}
+    set {PLAYER::%{_target}%::{@base.name}::friend::req-closefriend-list::%{_p}%::req-date} to now
+    set {PLAYER::%{_p}%::{@base.name}::friend::pending-closefriend-list::%{_target}%} to {_target}
+function friend_removeRequestCloseFriend(p: offline player, target: offline player):
+    delete {PLAYER::%{_p}%::{@base.name}::friend::req-closefriend-list::%{_target}%}
+    delete {PLAYER::%{_p}%::{@base.name}::friend::req-closefriend-list::%{_target}%::*}
+    delete {PLAYER::%{_target}%::{@base.name}::friend::pending-closefriend-list::%{_p}%}
+# Condition
+function friend_isFriend(p: offline player, target: offline player) :: boolean:
+    if {PLAYER::%{_p}%::{@base.name}::friend::list::%{_target}%} is set:
+        return true
+    return false
+function friend_isCloseFriend(p: offline player, target: offline player) :: boolean:
+    if {PLAYER::%{_p}%::{@base.name}::friend::list::%{_target}%::close-friend} is true:
+        return true
+    return false
+# Get
+function friend_getDefaultMax() :: number:
+    return 50
+function friend_getPlayerMax(p: offline player) :: number:
+    set {_a} to 0
+    if {PLAYER::%{_p}%::{@base.name}::friend::max::specialshop} is set:
+        add {PLAYER::%{_p}%::{@base.name}::friend::max::specialshop}*50 to {_a} 
+    return floor(friend_getDefaultMax()+{_a})
+function friend_getFriends(p: offline player) :: offline players:
+    return {PLAYER::%{_p}%::{@base.name}::friend::list::*}
+function friend_getCloseFriends(p: offline player) :: offline players:
+    loop {PLAYER::%{_p}%::{@base.name}::friend::list::*}:
+        friend_isCloseFriend({_p}, loop-value-1) is true
+        add loop-value-1 to {_return::*}
+    return {_return::*}
+function friend_getRequestFriends(p: offline player) :: offline players:
+    return {PLAYER::%{_p}%::{@base.name}::friend::req-list::*}
+function friend_getRequestCloseFriends(p: offline player) :: offline players:
+    return {PLAYER::%{_p}%::{@base.name}::friend::req-closefriend-list::*}
+function friend_getPendingRequestFriends(p: offline player) :: offline players:
+    return {PLAYER::%{_p}%::{@base.name}::friend::pending-list::*}
+function friend_getPendingRequestCloseFriends(p: offline player) :: offline players:
+    return {PLAYER::%{_p}%::{@base.name}::friend::pending-closefriend-list::*}
