@@ -1,0 +1,26 @@
+Options:
+    base.name: basic
+
+function clearlag_runClear():
+    set {_count} to 0
+    loop dropped items:
+        clear loop-entity
+        add 1 to {_count}
+    set {PERMDATA::{@base.name}::clearlag::total-items} to {_count}
+    set {PERMDATA::{@base.name}::clearlag::last-run} to now
+
+every 1 seconds:
+    clearlag_runAuto(false)
+
+function clearlag_runAuto(silent: boolean):
+    if {PERMDATA::{@base.name}::clearlag::last-run} is not set:
+        set {PERMDATA::{@base.name}::clearlag::last-run} to now
+
+    if difference between {PERMDATA::{@base.name}::clearlag::last-run} and now > 60 seconds:
+        clearlag_runClear()
+        broadcast "clearlag = success"
+    else:
+        if difference between {PERMDATA::{@base.name}::clearlag::last-run} and now > 45 seconds:
+            broadcast "clearlag = %difference between {PERMDATA::{@base.name}::clearlag::last-run} and now% left"
+        else:
+            broadcast "past %difference between {PERMDATA::{@base.name}::clearlag::last-run} and now%"
