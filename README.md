@@ -4,7 +4,7 @@
     </b>
 </h1>
 <p>
-  Various snippets for the Skript programming language
+  Various snippets for the Python programming language
 </p>
 
 <h2 align="center">
